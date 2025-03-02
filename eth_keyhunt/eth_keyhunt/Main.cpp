@@ -373,6 +373,10 @@ int main(int argc, char** argv)
 				hashORxpoint.push_back(c);
 			}
 			assert(hashORxpoint.size() == 20);
+			
+			// for (size_t i = 0; i < hashORxpoint.size(); i++) {
+			// 	((uint8_t*)hash160Keccak)[i] = hashORxpoint.at(i);
+			// }
 		}
 		break;
 		
