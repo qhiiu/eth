@@ -11,12 +11,6 @@
  
 #define CPU_GRP_SIZE (2048 * 1) 
 
-
-#define P2PKH_C 1
-#define P2PKH_U 2
-#define P2SH   	3
-#define BECH32 	4
-
 class KeyHunt;
 
 typedef struct {
@@ -38,10 +32,8 @@ class KeyHunt
 {
 
 public:
-	// KeyHunt(const std::vector<unsigned char>& hashORxpoint, const std::string& outputFile, 
-	// 	const Int rangeStart, const Int rangeEnd, const Int priv_dec, uint64_t xN, uint64_t P , bool& should_exit);
 
-	KeyHunt(uint32_t* arrData_P2PKH,uint32_t* arrData_P2SH,uint32_t* arrData_BECH32, const std::string& outputFile, 
+	KeyHunt(uint32_t* arrDataETH, const std::string& outputFile, 
 		const Int rangeStart, const Int rangeEnd, const Int priv_dec, uint64_t xN, bool& should_exit);
 
 	~KeyHunt();
@@ -53,9 +45,11 @@ private:
 
 	void InitGenratorTable();
 
-	bool checkPrivKey(std::string addr, Int& key, int32_t incr, uint32_t typeAddr);
+	// bool checkPrivKey(std::string addr, Int& key, int32_t incr, uint32_t typeAddr);
+	bool checkPrivKey(std::string addr, Int& key, int32_t incr);
 
-	void print_and_save_data(std::string addr, std::string pAddr, std::string pAddrHex, std::string pubKey, std::string typeAddr);
+	// void print_and_save_data(std::string addr, std::string pAddr, std::string pAddrHex, std::string pubKey, std::string typeAddr);
+	void print_and_save_data(std::string addr, std::string pAddr, std::string pAddrHex, std::string pubKey);
 	bool isAlive(TH_PARAM* p);
 
 	bool hasStarted(TH_PARAM* p);
@@ -79,9 +73,10 @@ private:
 
 	std::string outputFile;
 
-	uint32_t* arrData_P2PKH_KEYHUNT; 
-	uint32_t* arrData_P2SH_KEYHUNT;
-	uint32_t* arrData_BECH32_KEYHUNT;
+	// uint32_t* arrData_P2PKH_KEYHUNT; 
+	// uint32_t* arrData_P2SH_KEYHUNT;
+	// uint32_t* arrData_BECH32_KEYHUNT;
+	uint32_t* arrDataETH;
 
 	
 	Int priv_dec;

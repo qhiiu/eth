@@ -2,7 +2,7 @@
 // MAXX.SetBase10("11579208923731619542357098500868790785283756427907490438260516314151"); // remove 10th-end
 
 #include "Timer.h"
-#include "KeyHunt.h"
+#include "KeyHunt.h" 
 #include "Base58.h"
 #include <string>
 #include <cassert>
@@ -13,7 +13,7 @@
 #include <fstream>
 #include <map>
 #include <cstring>
-#include "hiiu_DecodeAddr.cpp"
+#include "hiiu_decodeAddrToHash160keccak.cpp"
 
 using namespace std;
  
@@ -170,9 +170,9 @@ void run(){
 
 	Int privDec, rangeStart, rangeEnd;
 
-    //set value
+    //set value 
     int xN = 1;
-    int mode = RANDOM;
+    int mode = RANDOM; 
     init_value(mode, xN, privDec, rangeStart, rangeEnd);
     // test(rangeStart, rangeEnd); // test-here -----------------------------
 
@@ -180,8 +180,8 @@ void run(){
     std::cout << "\n\nOUTPUT FILE  : " << outputFile;
 
 
-    // listAddr -> arrData ----start ===========================
-    std::string name_file_data = "data/1000_btc.txt";
+    // =========================== listAddr -> arrData ---- end ===========================
+    std::string name_file_data = "data/eth_1000_.txt";
     // std::string name_file_data = "data/test_data.txt"; // test-here -----------------------------
 
     std::cout << "\nName_file_data : " << name_file_data;
@@ -189,18 +189,12 @@ void run(){
 
     string addr;
 
-    // store number tpye of addr
-    uint32_t n_P2PKH = 0;
-    uint32_t n_P2SH = 0;
-    uint32_t n_BECH32 = 0;
+    // count number of addrETH
+    uint32_t n_addrETH = 0;
 
     if (file_data.is_open()) {
         while (getline(file_data, addr)) {
-            std::string firstLetter_addr(1, addr[0]);
-
-            if (firstLetter_addr == "1") { n_P2PKH++; } 
-			if (firstLetter_addr == "3") { n_P2SH++; } 
-			if (firstLetter_addr == "b") { n_BECH32++; }
+            n_addrETH++;
         }   
         file_data.close();
     } else {
@@ -208,21 +202,14 @@ void run(){
         exit(-1); 
     }
 
-    // list array data to store each type
-    uint32_t arrData_P2PKH[5 * n_P2PKH + 1]; 
-    uint32_t arrData_P2SH[5 * n_P2SH  + 1]; 
-    uint32_t arrData_BECH32[5 * n_BECH32 + 1];  
+    // init list arrDataETH
+    uint32_t arrDataETH[5 * n_addrETH + 1];
+    arrDataETH[0] = n_addrETH;
 
-	arrData_P2PKH[0] 	= n_P2PKH;
-	arrData_P2SH[0] 	= n_P2SH;
-	arrData_BECH32[0] 	= n_BECH32;
-	
-	uint32_t gen_hash160[5];
+	uint32_t gen_hash160keccak[5];
 
     // reset n_counter
-    n_P2PKH = 0;
-    n_P2SH = 0;
-    n_BECH32 = 0;
+    n_addrETH = 0
 
     ifstream fileData(name_file_data); 
     string addrLine;
@@ -231,50 +218,15 @@ void run(){
         while (getline(fileData, addrLine)) {
 
             trim(addrLine);  // remove extra spaces or newlines
-            std::string firstLetter_addrLine(1, addrLine[0]);
 
-			//----------------------------------------------
-            if (firstLetter_addrLine == "1") {
+            decodeAddrToHash160keccak(addrLine, gen_hash160keccak);
+            arrDataETH[5 * n_addrETH + 1] = gen_hash160keccak[0];
+            arrDataETH[5 * n_addrETH + 2] = gen_hash160keccak[1];
+            arrDataETH[5 * n_addrETH + 3] = gen_hash160keccak[2];
+            arrDataETH[5 * n_addrETH + 4] = gen_hash160keccak[3];
+            arrDataETH[5 * n_addrETH + 5] = gen_hash160keccak[4];
 
-				hiiu_decodeBase58(addrLine, gen_hash160);
-
-				arrData_P2PKH[5 * n_P2PKH + 1] = gen_hash160[0];
-				arrData_P2PKH[5 * n_P2PKH + 2] = gen_hash160[1];
-				arrData_P2PKH[5 * n_P2PKH + 3] = gen_hash160[2];
-				arrData_P2PKH[5 * n_P2PKH + 4] = gen_hash160[3];
-				arrData_P2PKH[5 * n_P2PKH + 5] = gen_hash160[4];
-
-				n_P2PKH++;
-            } 
-
-			//----------------------------------------------
-			if (firstLetter_addrLine == "3") {
-
-				hiiu_decodeBase58(addrLine, gen_hash160);	
-
-				arrData_P2SH[5 * n_P2SH + 1] = gen_hash160[0];
-				arrData_P2SH[5 * n_P2SH + 2] = gen_hash160[1];
-				arrData_P2SH[5 * n_P2SH + 3] = gen_hash160[2];
-				arrData_P2SH[5 * n_P2SH + 4] = gen_hash160[3];
-				arrData_P2SH[5 * n_P2SH + 5] = gen_hash160[4];
-
-				n_P2SH++;
-            } 
-
-			//----------------------------------------------
-			if (firstLetter_addrLine == "b") {
-				
-				// uint32_t gen_hash160[5];
-				hiiu_decodeBech32(addrLine.c_str(), gen_hash160);	
-				
-				arrData_BECH32[5 * n_BECH32 + 1] = gen_hash160[0];
-				arrData_BECH32[5 * n_BECH32 + 2] = gen_hash160[1];
-				arrData_BECH32[5 * n_BECH32 + 3] = gen_hash160[2];
-				arrData_BECH32[5 * n_BECH32 + 4] = gen_hash160[3];
-				arrData_BECH32[5 * n_BECH32 + 5] = gen_hash160[4];
-
-				n_BECH32++;
-            }
+            n_addrETH++;
 
         }   
         fileData.close();
@@ -294,7 +246,7 @@ void run(){
 
 	KeyHunt* keyHunt;
     bool should_exit = false;
-	keyHunt = new KeyHunt(arrData_P2PKH, arrData_P2SH, arrData_BECH32, outputFile, rangeStart, rangeEnd, privDec, xN, should_exit);
+	keyHunt = new KeyHunt(arrDataETH, outputFile, rangeStart, rangeEnd, privDec, xN, should_exit);
 	keyHunt->Search(gpuId, gridSize, should_exit);
 
 	delete keyHunt;

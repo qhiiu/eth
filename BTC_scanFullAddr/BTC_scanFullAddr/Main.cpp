@@ -4,7 +4,7 @@
 #include "Timer.h"
 #include "KeyHunt.h"
 #include "Base58.h"
-#include <string>
+#include <string> 
 #include <cassert>
 #include <signal.h>
 #include <unistd.h>

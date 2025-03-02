@@ -1413,8 +1413,10 @@ public:
 
 	void pubkeyToHash160keccak(Point& pubKey, uint32_t* hash);
 	std::string pubkeyToAddr(Point& pubKey);
-	
+
 	std::string hash160keccakToAddr(uint32_t* hash);
+
+	void decodeAddrToHash160keccak(char* p_hex);
 };
 //----------------------------------------------------------------------------------
 
@@ -1436,7 +1438,7 @@ Point ETH::privToPubkey(char* p_hex)
 }
 //----------------------------------------------------------------------------------
 
-void ETH::privToHash160keccak(char* p_hex,uint32_t* hash);
+void ETH::privToHash160keccak(char* p_hex,uint32_t* hash)
 {
 	char* priv_hex = p_hex;
 
@@ -1522,62 +1524,18 @@ std::string ETH::hash160keccakToAddr(uint32_t* hash)
 	return addr;
 }
 //----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
-//============== HIIU::BITCOIN - end =============================================================================
-
-int main()
+void ETH::decodeAddrToHash160keccak(char* addr)
 {
+	string address = addr;
 
-	std::cout<<std::endl<<" -------------------------------------------- ";
-
-	Secp256K1*	secp = new Secp256K1();   
-	secp->Init();	
-
-	Int priv; 
-	// priv.SetBase16(priv_hex); 
-	priv.SetBase16("5a8425eac0e9479f3f48cd9cd5d10b0ebba6b22bcd49d2caf678622ae362eb40"); 
-	std::cout << "\nPriv : " << priv.GetBase16();
-
-	// Int k(&priv);
-	// k.Add((uint64_t)incr);
-	Point pubKey = secp->ComputePublicKey(&priv);
-	
-	std::string addr = secp->pubkeyToAddr(pubKey); 
-
-	std::cout << "\nAddr : " << addr;
-
-	printf("\n\n\n\n\n");
-
-	//---------------------------------------- 
-	//priv --> hash160 
-	uint32_t h[5];
-	secp->pubkeyToHash160keccak(pubKey, h);
-
-	for (int i = 0; i < 5; i++){	printf("\n --- _hash160[] : %d ", h[i]); }
-
-	printf("\n\n\n\n\n");
-
-	//---------------------------------------- 
-	std::string addr_2 = secp->hash160keccakToAddr(h); 
-
-	std::cout << "\nAddr : " << addr_2;
-
-	printf("\n\n\n\n\n");
-
-
-	//-- addr -> hash160[5] -------------------------------------- 
 	std::vector<unsigned char> hashORxpoint;
-
-	string address = "0x73b1d0d7eea322bac6cfe7b9329daf79ca1ac76a";
 	address.erase(0, 2); // 
 	for (int i = 0; i < 40; i += 2) {
 		uint8_t c = 0;
 		for (size_t j = 0; j < 2; j++) {
 			uint32_t c0 = (uint32_t)address[i + j];
 			uint8_t c2 = (uint8_t)strtol((char*)&c0, NULL, 16);
-			if (j == 0)
+			if (j == 0) 
 				c2 = c2 << 4; 
 			c |= c2;
 		}
@@ -1590,6 +1548,40 @@ int main()
 	}
 
 	for (int i = 0; i < 5; i++){	printf("\n --- hash160Keccak[] : %d ", hash160Keccak[i]); }
+}
+//----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
+
+//============== HIIU::BITCOIN - end =============================================================================
+
+int main()
+{
+
+	std::cout<<std::endl<<" -------------------------------------------- ";
+
+	ETH eth;
+	eth.decodeAddrToHash160keccak("0x73B1D0D7EEa322bAc6cfE7B9329daf79ca1Ac76A");
+
+	// std::cout << "\nAddr : " << addr;
+
+	printf("\n\n\n\n\n");
+
+	//---------------------------------------- 
+	//priv --> hash160 
+	uint32_t h[5];
+	eth.privToHash160keccak("5a8425eac0e9479f3f48cd9cd5d10b0ebba6b22bcd49d2caf678622ae362eb40",h);
+	for (int i = 0; i < 5; i++){	printf("\n --- h[] : %d ", h[i]); }
+
+
+	printf("\n\n\n\n\n");
+
+	//---------------------------------------- 
+
+	printf("\n\n\n\n\n");
+
+
+	//-- addr -> hash160[5] -------------------------------------- 
+
 
 
 	printf("\n\n\n\n\n");

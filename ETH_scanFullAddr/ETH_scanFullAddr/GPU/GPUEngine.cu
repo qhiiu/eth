@@ -30,44 +30,25 @@ __device__ uint64_t* Gy = NULL;
 // ---------------------------------------------------------------------------------------
 
 // __device__ __noinline__ void Check__Hash(uint64_t* px, uint64_t* py, int32_t incr, uint32_t* out_found, uint32_t* __input_arrData_P2PKH_GPU, uint32_t* __input_arrData_P2SH_GPU, uint32_t* __input_arrData_BECH32_GPU)
-__device__ __noinline__ void Check__Hash(uint64_t* px, uint64_t* py, uint32_t incr, uint32_t* out_found, uint32_t* __input_arrData_P2PKH_GPU, uint32_t* __input_arrData_P2SH_GPU, uint32_t* __input_arrData_BECH32_GPU)
+__device__ __noinline__ void Check__Hash(uint64_t* px, uint64_t* py, uint32_t incr, uint32_t* out_found, uint32_t* __input_arrDataETH_GPU)
 {	
-
-	uint8_t isOdd = py[0] & 1; 
-	uint32_t _hash160_P2PKHc_and_BECH32[5];
-	uint32_t _hash160_P2PKHu[5];
-	uint32_t _hash160_P2SH[5];
-
-
-
-	// gen hash160 P2PKHc + BECH32 from px,py
-	_GetHash160Comp(px, isOdd, (uint8_t*)_hash160_P2PKHc_and_BECH32); 
-	// _GetHash160Comp(px, isOdd, _hash160_P2PKHc_and_BECH32); 
-
-
-	// gen hash160 P2PKHu from px,py
-	_GetHash160(px, py, (uint8_t*)_hash160_P2PKHu);
-	// _GetHash160(px, py, _hash160_P2PKHu);
-
-
-	// gen hash160 P2PSH from px,py
-	_GetHash160P2SHComp(px, isOdd, (uint8_t*)_hash160_P2SH); 
-	// _GetHash160P2SHComp(px, isOdd, _hash160_P2SH); 
-
+	// gen hash160keccak from px,py
+	uint32_t _hash160keccak[5];
+	_GetHashKeccak160(px, py, _hash160keccak);
 
 
 	// ---------- compare each h[5] to arrData -------------- 
 	// 1 =============== P2PKH_C + P2PKH_U ===============
-	uint32_t n_P2PKH = __input_arrData_P2PKH_GPU[0];
+	uint32_t n_P2PKH = __input_arrDataETH_GPU[0];
 	
 	for (uint32_t i = 0; i < n_P2PKH; i++)
 	{
 		// 	1.1 =============== P2PKH_C =============== 
-		if(_hash160_P2PKHc_and_BECH32[0] == __input_arrData_P2PKH_GPU[5 * i + 1]) {
-			if(_hash160_P2PKHc_and_BECH32[1] == __input_arrData_P2PKH_GPU[5 * i + 2]){
-				if(_hash160_P2PKHc_and_BECH32[2] == __input_arrData_P2PKH_GPU[5 * i + 3]){
-					if(_hash160_P2PKHc_and_BECH32[3] == __input_arrData_P2PKH_GPU[5 * i + 4]){
-						if(_hash160_P2PKHc_and_BECH32[4] == __input_arrData_P2PKH_GPU[5 * i + 5]){			
+		if(_hash160keccak[0] == __input_arrDataETH_GPU[5 * i + 1]) {
+			if(_hash160keccak[1] == __input_arrDataETH_GPU[5 * i + 2]){
+				if(_hash160keccak[2] == __input_arrDataETH_GPU[5 * i + 3]){
+					if(_hash160keccak[3] == __input_arrDataETH_GPU[5 * i + 4]){
+						if(_hash160keccak[4] == __input_arrDataETH_GPU[5 * i + 5]){			
 							
 							printf("\n\n ===== take your fucking money ====== p2pkhc");
 
@@ -77,118 +58,14 @@ __device__ __noinline__ void Check__Hash(uint64_t* px, uint64_t* py, uint32_t in
 							
 							out_found[nbFounded * 8 + 1] = thId;
 							out_found[nbFounded * 8 + 2] = (uint32_t)(incr << 16);
-							out_found[nbFounded * 8 + 3] = _hash160_P2PKHc_and_BECH32[0];
-							out_found[nbFounded * 8 + 4] = _hash160_P2PKHc_and_BECH32[1];
-							out_found[nbFounded * 8 + 5] = _hash160_P2PKHc_and_BECH32[2];
-							out_found[nbFounded * 8 + 6] = _hash160_P2PKHc_and_BECH32[3]; 
-							out_found[nbFounded * 8 + 7] = _hash160_P2PKHc_and_BECH32[4];	
+							out_found[nbFounded * 8 + 3] = _hash160keccak[0];
+							out_found[nbFounded * 8 + 4] = _hash160keccak[1];
+							out_found[nbFounded * 8 + 5] = _hash160keccak[2];
+							out_found[nbFounded * 8 + 6] = _hash160keccak[3]; 
+							out_found[nbFounded * 8 + 7] = _hash160keccak[4];	
 
-							uint32_t typeAddr = _P2PKH_C;
-							out_found[nbFounded * 8 + 8] = typeAddr;	
-						}	
-					}	
-				}	
-			}
-		}
-
-		// 1.2 =============== P2PKH_U =============== 
-		if(_hash160_P2PKHu[0] == __input_arrData_P2PKH_GPU[5 * i + 1]) {
-			if(_hash160_P2PKHu[1] == __input_arrData_P2PKH_GPU[5 * i + 2]){
-				if(_hash160_P2PKHu[2] == __input_arrData_P2PKH_GPU[5 * i + 3]){
-					if(_hash160_P2PKHu[3] == __input_arrData_P2PKH_GPU[5 * i + 4]){
-						if(_hash160_P2PKHu[4] == __input_arrData_P2PKH_GPU[5 * i + 5]){			
-
-							printf("\n\n ===== take your fucking money ====== p2pkhu");
-
-							uint32_t thId = (blockIdx.x * blockDim.x) + threadIdx.x;			
-
-							uint32_t nbFounded = atomicAdd(out_found, 1); // add 1 in out_found[0]
-							
-							out_found[nbFounded * 8 + 1] = thId;
-							out_found[nbFounded * 8 + 2] = (uint32_t)(incr << 16);
-							out_found[nbFounded * 8 + 3] = _hash160_P2PKHu[0];
-							out_found[nbFounded * 8 + 4] = _hash160_P2PKHu[1];
-							out_found[nbFounded * 8 + 5] = _hash160_P2PKHu[2];
-							out_found[nbFounded * 8 + 6] = _hash160_P2PKHu[3]; 
-							out_found[nbFounded * 8 + 7] = _hash160_P2PKHu[4];	
-
-							uint32_t typeAddr = _P2PKH_U;
-							out_found[nbFounded * 8 + 8] = typeAddr;	
-						}	
-					}	
-				}	
-			}
-		}
-
-	} // end for 
-
-	
-	// 2 =============== P2SH ===============
-	uint32_t n_P2SH = __input_arrData_P2SH_GPU[0];
-	
-	for (uint32_t i = 0; i < n_P2SH; i++)
-	{
-		// compare list_hash160_target in arrData
-		if(_hash160_P2SH[0] == __input_arrData_P2SH_GPU[5 * i + 1]) {
-			if(_hash160_P2SH[1] == __input_arrData_P2SH_GPU[5 * i + 2]){
-				if(_hash160_P2SH[2] == __input_arrData_P2SH_GPU[5 * i + 3]){
-					if(_hash160_P2SH[3] == __input_arrData_P2SH_GPU[5 * i + 4]){
-						if(_hash160_P2SH[4] == __input_arrData_P2SH_GPU[5 * i + 5]){			
-
-							printf("\n\n ===== take your fucking money ====== p2sh");
-
-							uint32_t thId = (blockIdx.x * blockDim.x) + threadIdx.x;			
-							
-							uint32_t nbFounded = atomicAdd(out_found, 1); // add 1 in out_found[0]
-							
-							out_found[nbFounded * 8 + 1] = thId;
-							out_found[nbFounded * 8 + 2] = (uint32_t)(incr << 16);
-							out_found[nbFounded * 8 + 3] = _hash160_P2SH[0];
-							out_found[nbFounded * 8 + 4] = _hash160_P2SH[1];
-							out_found[nbFounded * 8 + 5] = _hash160_P2SH[2];
-							out_found[nbFounded * 8 + 6] = _hash160_P2SH[3]; 
-							out_found[nbFounded * 8 + 7] = _hash160_P2SH[4];	
-	
-							uint32_t typeAddr = _P2SH;
-							out_found[nbFounded * 8 + 8] = typeAddr;	
-						}	
-					}	
-				}	
-			}
-		}
-	}
-
-
-
-	// 3 =============== BECH32 = segwit ===============
-	uint32_t n_BECH32 = __input_arrData_BECH32_GPU[0];
-	
-	for (uint32_t i = 0; i < n_BECH32; i++)
-	{
-		// compare list_hash160_target in arrData
-		if(_hash160_P2PKHc_and_BECH32[0] == __input_arrData_BECH32_GPU[5 * i + 1]) {
-			if(_hash160_P2PKHc_and_BECH32[1] == __input_arrData_BECH32_GPU[5 * i + 2]){
-				if(_hash160_P2PKHc_and_BECH32[2] == __input_arrData_BECH32_GPU[5 * i + 3]){
-					if(_hash160_P2PKHc_and_BECH32[3] == __input_arrData_BECH32_GPU[5 * i + 4]){
-						if(_hash160_P2PKHc_and_BECH32[4] == __input_arrData_BECH32_GPU[5 * i + 5]){			
-
-							printf("\n\n ===== take your fucking money ====== bech32");
-
-							uint32_t thId = (blockIdx.x * blockDim.x) + threadIdx.x;			
-							
-							uint32_t nbFounded = atomicAdd(out_found, 1); // add 1 in out_found[0]
-
-							out_found[nbFounded * 8 + 1] = thId;
-							out_found[nbFounded * 8 + 2] = (uint32_t)(incr << 16);
-							out_found[nbFounded * 8 + 3] = _hash160_P2PKHc_and_BECH32[0];
-							out_found[nbFounded * 8 + 4] = _hash160_P2PKHc_and_BECH32[1];
-							out_found[nbFounded * 8 + 5] = _hash160_P2PKHc_and_BECH32[2];
-							out_found[nbFounded * 8 + 6] = _hash160_P2PKHc_and_BECH32[3]; 
-							out_found[nbFounded * 8 + 7] = _hash160_P2PKHc_and_BECH32[4];	
-	
-							uint32_t typeAddr = _BECH32;
-							out_found[nbFounded * 8 + 8] = typeAddr;	
-
+							// uint32_t typeAddr = _P2PKH_C;
+							// out_found[nbFounded * 8 + 8] = typeAddr;	
 						}	
 					}	
 				}	
@@ -197,8 +74,7 @@ __device__ __noinline__ void Check__Hash(uint64_t* px, uint64_t* py, uint32_t in
 	}
 
 }
-#define CHECK__HASH(incr) Check__Hash(px, py, incr, out_found, __input_arrData_P2PKH_GPU, __input_arrData_P2SH_GPU, __input_arrData_BECH32_GPU)
-
+#define CHECK__HASH(incr) Check__Hash(px, py, incr, out_found, __input_arrDataETH_GPU)
 
 // GPUEngine.cu  
 // //======================================================================================
@@ -677,7 +553,7 @@ bool GPUEngine::LaunchSEARCH_MODE_SA(std::vector<ITEM>& dataFound)
 		int16_t* ptr = (int16_t*)&(itemPtr[1]);
 		it.incr = ptr[1];  
 		it.hash = (uint8_t*)(itemPtr + 2);
-		it.typeAddr = itemPtr[7];
+		// it.typeAddr = itemPtr[7];
 
 		dataFound.push_back(it);
 	}

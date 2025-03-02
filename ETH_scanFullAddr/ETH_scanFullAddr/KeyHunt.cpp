@@ -3,7 +3,7 @@
 #include "Base58.h"
 #include "hash/sha256.h"
 #include "hash/keccak160.h"
-#include "IntGroup.h"
+#include "IntGroup.h" 
 #include "Timer.h"
 #include "hash/ripemd160.h"
 #include <cstring>
@@ -23,7 +23,7 @@ Point _2Gn;
 
 // ----------------------------------------------------------------------------
 
-KeyHunt::KeyHunt(uint32_t* arrData_P2PKH, uint32_t* arrData_P2SH, uint32_t* arrData_BECH32, const std::string& outputFile,
+KeyHunt::KeyHunt(uint32_t* arrDataETH, const std::string& outputFile,
 	const Int rangeStart, const Int rangeEnd, const Int priv_dec,uint64_t xN, bool& should_exit)
 {
 	this->priv_dec = priv_dec;
@@ -40,10 +40,10 @@ KeyHunt::KeyHunt(uint32_t* arrData_P2PKH, uint32_t* arrData_P2SH, uint32_t* arrD
 	secp = new Secp256K1();
 	secp->Init();
 
-	this->arrData_P2PKH_KEYHUNT = arrData_P2PKH;
-	this->arrData_P2SH_KEYHUNT = arrData_P2SH;
-	this->arrData_BECH32_KEYHUNT = arrData_BECH32;
-
+	// this->arrData_P2PKH_KEYHUNT = arrData_P2PKH;
+	// this->arrData_P2SH_KEYHUNT = arrData_P2SH;
+	// this->arrData_BECH32_KEYHUNT = arrData_BECH32;
+	this->arrDataETH = arrDataETH;
 
 	printf("\n");
 
@@ -111,7 +111,8 @@ KeyHunt::~KeyHunt()
 
 // ----------------------------------------------------------------------------
 
-void KeyHunt::print_and_save_data(std::string addr, std::string privWif, std::string privHex, std::string pubKey, std::string typeAddr)
+// void KeyHunt::print_and_save_data(std::string addr, std::string privWif, std::string privHex, std::string pubKey, std::string typeAddr)
+void KeyHunt::print_and_save_data(std::string addr, std::string privWif, std::string privHex, std::string pubKey)
 {
 	FILE* f = stdout;
 	bool needToClose = false;
@@ -129,7 +130,7 @@ void KeyHunt::print_and_save_data(std::string addr, std::string privWif, std::st
 	// save into file 
 	fprintf(f, "\n=================================================================================\n\n");
 	fprintf(f, "Address: -----> %s <----- ", addr.c_str());
-	fprintf(f, "typeAddr : %s\n\n", typeAddr.c_str());
+	// fprintf(f, "typeAddr : %s\n\n", typeAddr.c_str());
 	fprintf(f, "Priv (HEX): %s\n", privHex.c_str());
 	fprintf(f, "Priv (WIF): %s\n\n", privWif.c_str());
 	// fprintf(f, "PubK (HEX): %s\n", pubKey.c_str());
@@ -138,7 +139,7 @@ void KeyHunt::print_and_save_data(std::string addr, std::string privWif, std::st
 	//print info to screen
 	fprintf(stdout, "\n=================================================================================\n\n");
 	fprintf(stdout, "Address: -----> %s <----- ", addr.c_str());
-	fprintf(stdout, "typeAddr : %s\n\n", typeAddr.c_str());
+	// fprintf(stdout, "typeAddr : %s\n\n", typeAddr.c_str());
 	fprintf(stdout, "Priv (HEX): %s\n", privHex.c_str());
 	fprintf(stdout, "Priv (WIF): %s\n\n", privWif.c_str());
 	// fprintf(stdout, "PubK (HEX): %s\n", pubKey.c_str()); 
@@ -152,7 +153,8 @@ void KeyHunt::print_and_save_data(std::string addr, std::string privWif, std::st
 
 // ----------------------------------------------------------------------------
 
-bool KeyHunt::checkPrivKey(std::string addr, Int& key, int32_t incr, uint32_t typeAddr)
+// bool KeyHunt::checkPrivKey(std::string addr, Int& key, int32_t incr, uint32_t typeAddr)
+bool KeyHunt::checkPrivKey(std::string addr, Int& key, int32_t incr)
 {
 	Int priv(&key);
 	priv.Add((uint64_t)incr);
@@ -160,24 +162,25 @@ bool KeyHunt::checkPrivKey(std::string addr, Int& key, int32_t incr, uint32_t ty
 	// Check addresses
 	Point pubKey = secp->ComputePublicKey(&priv);
 
-	std::string type_addr;
-	switch (typeAddr)
-	{
-	case P2PKH_C:
-		type_addr = "P2PKH_C";
-		break;
-	case P2PKH_U:
-		type_addr = "P2PKH_U";
-		break;
-	case P2SH:
-		type_addr = "P2SH";
-		break;
-	case BECH32:
-		type_addr = "BECH32";
-		break;
-	}
+	// std::string type_addr;
+	// switch (typeAddr)
+	// {
+	// case P2PKH_C:
+	// 	type_addr = "P2PKH_C";
+	// 	break;
+	// case P2PKH_U:
+	// 	type_addr = "P2PKH_U";
+	// 	break;
+	// case P2SH:
+	// 	type_addr = "P2SH";
+	// 	break;
+	// case BECH32:
+	// 	type_addr = "BECH32";
+	// 	break;
+	// }
 	
-	print_and_save_data(addr, secp->GetPrivAddress(1, priv), priv.GetBase16(), secp->GetPublicKeyHex(1, pubKey), type_addr);
+	// print_and_save_data(addr, secp->GetPrivAddress(1, priv), priv.GetBase16(), secp->GetPublicKeyHex(1, pubKey), type_addr);
+	print_and_save_data(addr, secp->GetPrivAddress(1, priv), priv.GetBase16(), secp->GetPublicKeyHex(1, pubKey));
 	return true;
 }
 
@@ -237,7 +240,7 @@ void KeyHunt::FindKeyGPU(TH_PARAM * ph)
 	GPUEngine* gpuEngine;
 
 	gpuEngine = new GPUEngine(secp, ph->gridSizeX, ph->gridSizeY, ph->gpuId, this->maxFound,
-						arrData_P2PKH_KEYHUNT, arrData_P2SH_KEYHUNT, arrData_BECH32_KEYHUNT); 
+						arrDataETH); 
 	
 	// gpuEngine->PrintCudaInfo(); //hiiu
 
@@ -264,12 +267,10 @@ void KeyHunt::FindKeyGPU(TH_PARAM * ph)
 		for (int i = 0; i < (int)found.size() && !endOfSearch; i++) {
 			ITEM it = found[i];
 			
-			//if found : take addr and priv by use checkPrivKey function.
-			hiiu_Bitcoin bitcoin;
 			std::string addr;
-			addr = bitcoin.hash160ToAddr(it.typeAddr, (uint32_t*)it.hash); 
-
-			if (checkPrivKey(addr, keys[it.thId], it.incr, it.typeAddr)) {	nbFoundKey++;	}
+			hash160keccakToAddr((uint32_t*)it.hash)
+			// if (checkPrivKey(addr, keys[it.thId], it.incr, it.typeAddr)) {	nbFoundKey++;	}
+			if (checkPrivKey(addr, keys[it.thId], it.incr)) {	nbFoundKey++;	}
 		}
 
 		if (ok) {
