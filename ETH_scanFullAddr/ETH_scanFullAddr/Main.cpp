@@ -69,7 +69,8 @@ void init_value(int mode, uint64_t xN,Int& privDec, Int& rangeStart, Int& rangeE
     Int MINN, MAXX;
     MINN.SetBase10("0");
     // MAXX.SetBase16("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364140"); // full
-    MAXX.SetBase10("11579208923731619542357098500868790785283756427907490438260516314151"); // remove 10th-end
+    // MAXX.SetBase10("115792089237316195423570985008687907852837564279074904382605163141518161494336"); // full
+    MAXX.SetBase10("115792089237316195423570985008687907852837564279074904382605163141518"); // remove 9th-end
     // std::cout << std::endl << "MAXX-10 : " << MAXX.GetBase10();
     // std::cout << std::endl << "MAXX-16 : " <<  MAXX.GetBase16();
 
@@ -99,23 +100,23 @@ void init_value(int mode, uint64_t xN,Int& privDec, Int& rangeStart, Int& rangeE
             // break;
         }
 
-        // set _10B
-        Int _10B, _xN10B;
-        _10B.SetBase10("10000000000"); 
-        // set xN10B = _10B then multiple to xN
-        _xN10B = _10B;
-        _xN10B.Mult(xN); 
+        // set _1B
+        Int _1B, _xN1B;
+        _1B.SetBase10("1000000000"); 
+        // set xN1B = _1B then multiple to xN
+        _xN1B = _1B;
+        _xN1B.Mult(xN); 
 
 
         //set --- rangeStart
         rangeStart = privDec; 
-        rangeStart.Mult(&_10B);
+        rangeStart.Mult(&_1B);
         // std::cout << std::endl << "rangeStart-10 :  " << rangeStart.GetBase10();
         // std::cout << std::endl << "rangeStart-16 :  " << rangeStart.GetBase16() << std::endl;
 
         //set --- rangEnd
         rangeEnd = rangeStart;
-        rangeEnd.Add(&_xN10B);
+        rangeEnd.Add(&_xN1B);
         // std::cout << std::endl << "rangeEnd-10 :    " << rangeEnd.GetBase10();
         // std::cout << std::endl << "rangeEnd-16 :    " << rangeEnd.GetBase16() << std::endl;
 
@@ -174,14 +175,19 @@ void run(){
     int xN = 1;
     int mode = RANDOM; 
     init_value(mode, xN, privDec, rangeStart, rangeEnd);
-    // test(rangeStart, rangeEnd); // test-here -----------------------------
+
+    // // test-here -----------------------------
+    // test(rangeStart, rangeEnd); 
+    // // test-here - end -----------------------
 
 	std::string outputFile = "$.txt";
     std::cout << "\n\nOUTPUT FILE  : " << outputFile;
 
 
     // =========================== listAddr -> arrData ---- end ===========================
+    // std::string name_file_data = "data/eth_100_.txt";
     std::string name_file_data = "data/eth_1000_.txt";
+    // std::string name_file_data = "data/eth_1000000_.txt";
     // std::string name_file_data = "data/test_data.txt"; // test-here -----------------------------
 
     std::cout << "\nName_file_data : " << name_file_data;
@@ -209,7 +215,7 @@ void run(){
 	uint32_t gen_hash160keccak[5];
 
     // reset n_counter
-    n_addrETH = 0
+    n_addrETH = 0;
 
     ifstream fileData(name_file_data); 
     string addrLine;
@@ -219,7 +225,7 @@ void run(){
 
             trim(addrLine);  // remove extra spaces or newlines
 
-            decodeAddrToHash160keccak(addrLine, gen_hash160keccak);
+            decodeAddrToHash160keccak(addrLine.c_str(), gen_hash160keccak);
             arrDataETH[5 * n_addrETH + 1] = gen_hash160keccak[0];
             arrDataETH[5 * n_addrETH + 2] = gen_hash160keccak[1];
             arrDataETH[5 * n_addrETH + 3] = gen_hash160keccak[2];

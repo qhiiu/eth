@@ -48,8 +48,7 @@ private:
 	// bool checkPrivKey(std::string addr, Int& key, int32_t incr, uint32_t typeAddr);
 	bool checkPrivKey(std::string addr, Int& key, int32_t incr);
 
-	// void print_and_save_data(std::string addr, std::string pAddr, std::string pAddrHex, std::string pubKey, std::string typeAddr);
-	void print_and_save_data(std::string addr, std::string pAddr, std::string pAddrHex, std::string pubKey);
+	void print_and_save_data(std::string addr, std::string pAddrHex, std::string pubKey);
 	bool isAlive(TH_PARAM* p);
 
 	bool hasStarted(TH_PARAM* p);

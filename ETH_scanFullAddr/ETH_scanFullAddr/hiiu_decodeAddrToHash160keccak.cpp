@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void decodeAddrToHash160keccak(char* addr, uint32_t* hash160Keccak)
+void decodeAddrToHash160keccak(const char* addr, uint32_t* hash160Keccak)
 {
 	string address = addr;
 
