@@ -12,16 +12,10 @@
 #define ITEM_SIZE_A 28
 #define ITEM_SIZE_A28 (ITEM_SIZE_A/4)
  
-// #define _P2PKH_C 1
-// #define _P2PKH_U 2
-// #define _P2SH 	3 
-// #define _BECH32 4
-
 typedef struct {
 	uint32_t thId;
 	int16_t  incr;
 	uint8_t* hash; 
-	// uint32_t typeAddr;
 } ITEM;
 
 class GPUEngine
@@ -53,14 +47,7 @@ private:
 	int nbThread;
 	int nbThreadPerGroup;
 
-	// uint32_t* input_arrData_P2PKH_GPU;
-	// uint32_t* input_arrData_P2SH_GPU;
-	// uint32_t* input_arrData_BECH32_GPU;
 	uint32_t* input_arrDataETH_GPU;
-
-	// uint32_t* input_arrData_P2PKH_GPU_pinned;
-	// uint32_t* input_arrData_P2SH_GPU_pinned;
-	// uint32_t* input_arrData_BECH32_GPU_pinned;
 	uint32_t* input_arrDataETH_GPU_pinned;
 
 	uint64_t* inputKey;
@@ -79,10 +66,6 @@ private:
 
 	uint32_t outputSize;
 
-
-	// uint32_t n_P2PKH;
-	// uint32_t n_P2SH;
-	// uint32_t n_BECH32;
 	uint32_t n_addrETH;
 
 };

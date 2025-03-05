@@ -41,7 +41,7 @@ void check_file_exist(){
 uint64_t check_data(std::string priv)
 {
     std::string fileName;
-    fileName = "xData.txt";
+    fileName = "xDataScanned.txt";
 
     ifstream file(fileName);
     string line;
@@ -134,16 +134,8 @@ void init_value(int mode, uint64_t xN,Int& privDec, Int& rangeStart, Int& rangeE
 //-----------------------------------------------------------------------
 void test(Int& rangeStart, Int& rangeEnd){
 
-    //13zb1hQbWVsc2S7ZTZnP2G4undNNpdh5so 
-    //2832ed74f2b5e35ee 
-    // rangeStart.SetBase16("2832ed74f00000000");
-    // rangeEnd.SetBase16("2832ed74f2fffffff");
-
-    // 1AUNPZwNmyDhxy7M4rVctPBW6dL2ZrG4fK
-    //35da1daf9584d5308b54b0d753d93f59c5b55fdea71d8cccd9941ab73c21bfcc        rangeStart.SetBase16("2832ed74f00000000");
     rangeStart.SetBase16("35da1daf9584d5308b54b0d753d93f59c5b55fdea71d8cccd9941ab730000000");
     rangeEnd.SetBase16("35da1daf9584d5308b54b0d753d93f59c5b55fdea71d8cccd9941ab740000000");
-    // rangeEnd.SetBase16("35da1daf9584d5308b54b0d753d93f59c5b55fdea71d8cccd9941ab750000000");
 
 }
 //-----------------------------------------------------------------------
@@ -184,11 +176,11 @@ void run(){
     std::cout << "\n\nOUTPUT FILE  : " << outputFile;
 
 
-    // =========================== listAddr -> arrData ---- end ===========================
+    // =========================== listAddr -> arrData ---- start ===========================
     // std::string name_file_data = "data/eth_100_.txt";
     std::string name_file_data = "data/eth_1000_.txt";
     // std::string name_file_data = "data/eth_1000000_.txt";
-    // std::string name_file_data = "data/test_data.txt"; // test-here -----------------------------
+    // std::string name_file_data = "data/test_data.txt"; // test
 
     std::cout << "\nName_file_data : " << name_file_data;
     ifstream file_data(name_file_data); 
@@ -220,6 +212,7 @@ void run(){
     ifstream fileData(name_file_data); 
     string addrLine;
 
+    // load data : each addr => hash160keccak => save to arrDataETH
     if (fileData.is_open()) {
         while (getline(fileData, addrLine)) {
 

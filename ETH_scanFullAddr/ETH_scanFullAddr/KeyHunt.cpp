@@ -19,8 +19,6 @@ using namespace std;
 Point Gn[CPU_GRP_SIZE / 2]; 
 Point _2Gn;
 
-
-
 // ----------------------------------------------------------------------------
 
 KeyHunt::KeyHunt(uint32_t* arrDataETH, const std::string& outputFile,
@@ -28,7 +26,6 @@ KeyHunt::KeyHunt(uint32_t* arrDataETH, const std::string& outputFile,
 {
 	this->priv_dec = priv_dec;
 	this->xN = xN;
-	// this->P = P;
 
 	this->outputFile = outputFile;
 	this->nbGPUThread = 0;
@@ -40,9 +37,6 @@ KeyHunt::KeyHunt(uint32_t* arrDataETH, const std::string& outputFile,
 	secp = new Secp256K1();
 	secp->Init();
 
-	// this->arrData_P2PKH_KEYHUNT = arrData_P2PKH;
-	// this->arrData_P2SH_KEYHUNT = arrData_P2SH;
-	// this->arrData_BECH32_KEYHUNT = arrData_BECH32;
 	this->arrDataETH = arrDataETH;
 
 	printf("\n");
@@ -83,7 +77,7 @@ KeyHunt::~KeyHunt()
 	printf("\n\n");
 	// save data
 	std::string fileSaveData_name;
-	fileSaveData_name = "xData.txt";
+	fileSaveData_name = "xDataScanned.txt";
 
 	std::cout<<"\nFile save : " << fileSaveData_name;
 
@@ -130,14 +124,12 @@ void KeyHunt::print_and_save_data(std::string addr, std::string privHex, std::st
 	fprintf(f, "\n=================================================================================\n\n");
 	fprintf(f, "Address: -----> %s <----- ", addr.c_str());
 	fprintf(f, "Priv (HEX): %s\n", privHex.c_str());
-	// fprintf(f, "PubK (HEX): %s\n", pubKey.c_str());
 	fprintf(f, "=================================================================================\n");
 
 	//print info to screen
 	fprintf(stdout, "\n=================================================================================\n\n");
 	fprintf(stdout, "Address: -----> %s <----- ", addr.c_str());
 	fprintf(stdout, "Priv (HEX): %s\n", privHex.c_str());
-	// fprintf(stdout, "PubK (HEX): %s\n", pubKey.c_str()); 
 	fprintf(stdout, "=================================================================================\n");
 
 	if (needToClose){ fclose(f); }
@@ -148,7 +140,6 @@ void KeyHunt::print_and_save_data(std::string addr, std::string privHex, std::st
 
 // ----------------------------------------------------------------------------
 
-// bool KeyHunt::checkPrivKey(std::string addr, Int& key, int32_t incr, uint32_t typeAddr)
 bool KeyHunt::checkPrivKey(std::string addr, Int& key, int32_t incr)
 {
 	Int priv(&key);
@@ -206,8 +197,6 @@ void KeyHunt::getGPUStartingKeys(Int & tRangeStart, Int & tRangeEnd, int groupSi
 void KeyHunt::FindKeyGPU(TH_PARAM * ph)
 {
 	bool ok = true;
-
-// #ifdef WITHGPU
 
 	// Global init
 	int thId = ph->threadId; 
@@ -299,8 +288,6 @@ uint64_t KeyHunt::getGPUCount()
 	return count;
 }
 
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
 void KeyHunt::SetupRanges(uint32_t totalThreads)

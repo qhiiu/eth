@@ -5,9 +5,6 @@
 #include <vector>
 #include "SECP256k1.h"
 #include "GPU/GPUEngine.h"
-#ifdef WIN64
-#include <Windows.h>
-#endif
  
 #define CPU_GRP_SIZE (2048 * 1) 
 
@@ -45,7 +42,6 @@ private:
 
 	void InitGenratorTable();
 
-	// bool checkPrivKey(std::string addr, Int& key, int32_t incr, uint32_t typeAddr);
 	bool checkPrivKey(std::string addr, Int& key, int32_t incr);
 
 	void print_and_save_data(std::string addr, std::string pAddrHex, std::string pubKey);
@@ -72,9 +68,6 @@ private:
 
 	std::string outputFile;
 
-	// uint32_t* arrData_P2PKH_KEYHUNT; 
-	// uint32_t* arrData_P2SH_KEYHUNT;
-	// uint32_t* arrData_BECH32_KEYHUNT;
 	uint32_t* arrDataETH;
 
 	
